@@ -19,6 +19,7 @@ The following is a tentative roadmap for the project to reach version 1.0.
 *  Consider switching to library name daiw, crawlai, crawlwrap, or similar similar to leave 'dcss' open
 *  (Last) push to PyPi
 *  (Last) test external examples work without having to install 
+*  (Last) Record tutorial videos for installing, running, and creating custom agents.
 
 ### v0.2
 *  Extend all features from O.1 to the Linux terminal version of the game
