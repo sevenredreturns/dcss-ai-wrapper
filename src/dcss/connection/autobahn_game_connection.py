@@ -1,5 +1,6 @@
 import json
 import time
+import random
 
 from dcss.actions.action import Action
 from dcss.connection import config
@@ -32,6 +33,7 @@ class DCSSProtocol(WebSocketClientProtocol):
         self._LOGGED_IN = False
         self._NEEDS_PONG = False
         self._NEEDS_ENTER = False
+        self._NEEDS_LEVEL_UP_RESPONSE = False
         self._GAME_MODE_SELECTED = False
         self._LOBBY_IS_CLEAR = False
         self._IN_LOBBY = False
@@ -104,6 +106,13 @@ class DCSSProtocol(WebSocketClientProtocol):
                 enter_key_msg = {"text": "\r", "msg": "input"}
                 self.sendMessage(json.dumps(enter_key_msg).encode('utf-8'))
                 self._NEEDS_ENTER = False
+            elif self._CONNECTED and self._NEEDS_LEVEL_UP_RESPONSE:
+                #TODO - give the agent the opportunity to choose this, this is a last minute hack for icaps tutorial
+                level_up_choice = random.choice(['S', 'I', 'D'])
+                level_up_msg = {"text": "{}".format(level_up_choice), "msg": "input"}
+                print("SENDING {} BECAUSE LEVEL UP RESPONSE NEEDED".format(level_up_choice))
+                self.sendMessage(json.dumps(level_up_msg).encode('utf-8'))
+                self._NEEDS_LEVEL_UP_RESPONSE = False
             else:
                 if self._CONNECTED and not self._LOGGED_IN:
                     print("SENDING LOGIN MESSAGE")
@@ -363,6 +372,10 @@ class DCSSProtocol(WebSocketClientProtocol):
             print("setting _NEEDS_ENTER = TRUE")
             self._NEEDS_ENTER = True
 
+        if self.check_for_level_up_response_needed(json_msg):
+            print("setting _NEEDS_LEVEL_UP_RESPONSE = TRUE")
+            self._NEEDS_LEVEL_UP_RESPONSE = True
+
         if self.check_for_in_lobby(json_msg):
             self._IN_LOBBY = True
             print("setting _IN_LOBBY = TRUE")
@@ -481,6 +494,12 @@ class DCSSProtocol(WebSocketClientProtocol):
                 mode_is_5 = True
 
         return input_mode_found and mode_is_5
+
+    def check_for_level_up_response_needed(self, json_msg):
+        for v in nested_lookup('text', json_msg):
+            if 'Your experience leads to an increase in your attributes' in v:
+                return True
+        return False
 
     def check_for_inventory_menu(self, json_msg):
         input_mode_found = False

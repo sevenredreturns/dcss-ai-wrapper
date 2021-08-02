@@ -36,6 +36,9 @@ class Monster:
         self.threat = 0
         self.type = None
 
+    def __str__(self):
+        return "{} with vals {} and ascii sym {}, cell is {}, threat is {} and type is {}".format(self.name, self.vals, self.ascii_sym, self.id, self.cell, self.threat, self.type)
+
     @staticmethod
     def create_or_update_monster(vals, ascii_sym):
         if 'id' in vals.keys():
@@ -43,10 +46,12 @@ class Monster:
             mon_id = vals['id']
             if mon_id in Monster.ids_to_monsters.keys():
                 # if this monster already exists, update instead of creating new one
+                print("monster already exists, updating using id of {}.".format(mon_id))
                 Monster.ids_to_monsters[mon_id].update(vals, ascii_sym)
                 return Monster.ids_to_monsters[mon_id]
             else:
                 # create a new monster and insert into Monster.ids_to_monsters
+                print("creating a new monster with the old id of {}".format(mon_id))
                 new_monster = Monster()
                 new_monster.update(vals, ascii_sym)
                 Monster.ids_to_monsters[new_monster.id] = new_monster
@@ -56,6 +61,7 @@ class Monster:
             return 'plant'
         elif 'name' in vals.keys():
             # create a new monster and don't give it an ID (IDs are reserved for the game to give us)
+            print("creating a new monster with no id")
             new_monster = Monster()
             new_monster.update(vals, ascii_sym)
             return new_monster

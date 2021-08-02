@@ -9,6 +9,7 @@ from dcss.state.game import GameState
 from dcss.actions.action import Action
 from dcss.actions.menuchoice import MenuChoice
 from dcss.state.menu import Menu
+from dcss.state.monster import Monster
 
 from dcss.websockgame import WebSockGame
 from dcss.connection.config import WebserverConfig
@@ -37,9 +38,24 @@ class HumanInterfaceBaseAgentDataTracking(BaseAgent):
         self.number_of_items_data = {}  # key is game turn, val is number of items seen in the game so far
         self.number_of_cells_data = {}  # key is game turn, val is number of cells seen in the game so far
 
+        self.nearby_monster = False
+
+    def check_for_monsters(self):
+        """
+        Returns true if one or more nearby monsters
+        """
+        print("all monsters are: {}".format(Monster.ids_to_monsters))
+        for monster_id in Monster.ids_to_monsters.keys():
+            print("  monster {} has cell {}".format(monster_id, Monster.ids_to_monsters[monster_id].cell))
+        self.nearby_monster = False
+        for cell in self.gamestate.get_cell_map().get_xy_to_cells_dict().values():
+            if cell.monster:
+                print("cell.monster = {}".format(cell.monster))
+                self.nearby_monster = True
+
     def get_action(self, gamestate: GameState):
         self.gamestate = gamestate
-        self.print_player_stats_vector(verbose=True)
+        #self.print_player_stats_vector(verbose=True)
         gameturn = gamestate.get_current_game_turn()
         num_facts = len(gamestate.all_pddl_facts())
         self.gameturns.append(gameturn)
@@ -55,6 +71,8 @@ class HumanInterfaceBaseAgentDataTracking(BaseAgent):
 
         # windows solution
         #next_action = None
+        self.check_for_monsters()
+        print("is there a monster nearby? {}".format(self.nearby_monster))
         print("Waiting for your next keypress, human")
         next_action = msvcrt.getch().decode()
         #next_action = input("Waiting for your next keypress, human")

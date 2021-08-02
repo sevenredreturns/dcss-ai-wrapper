@@ -1916,7 +1916,7 @@ class GameState:
                     vals['y'] = curr_y
 
                 if 'mon' in cell_dict.keys():
-                    # print("Found a monster cell with cell_dict vals {}".format(cell_dict))
+                    print("Found a monster cell with cell_dict vals {}".format(cell_dict))
                     # vals['mon'] = cell_dict['mon']
                     pass
 

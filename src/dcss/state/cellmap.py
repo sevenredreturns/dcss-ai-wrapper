@@ -33,11 +33,13 @@ class CellMap:
         if 'x' not in vals.keys():
             vals['x'] = x
         elif x != vals['x']:
-            print("WARNING potential issue with coordinates, x={} and vals[x]={}".format(x, vals['x']))
+            #print("WARNING potential issue with coordinates, x={} and vals[x]={}".format(x, vals['x']))
+            pass
         if 'y' not in vals.keys():
             vals['y'] = x
         elif y != vals['y']:
-            print("WARNING potential with coordinates, y={} and vals[y]={}".format(y, vals['y']))
+            #print("WARNING potential with coordinates, y={} and vals[y]={}".format(y, vals['y']))
+            pass
 
         if (x, y) in self.place_depth_to_x_y_to_cells[self.current_place][self.current_depth].keys():
             # print("updating existing cell x={},y={}".format(x,y))
@@ -62,12 +64,13 @@ class CellMap:
         # safety check - cell with player matches x and y
         if self.agent_x and self.agent_y:
             player_cell = self.place_depth_to_x_y_to_cells[self.current_place][self.current_depth][(self.agent_x, self.agent_y)]
-            if not player_cell.has_player:
-                print("WARNING - discrepancy in player location:")
-                print("     agent.x = {}".format(self.agent_x))
-                print("     agent.y = {}".format(self.agent_y))
-                print("     playercell.x = {}".format(player_cell.x))
-                print("     playercell.y = {}".format(player_cell.y))
+            # TODO confirm this isn't an issue
+            #if not player_cell.has_player:
+            #    print("WARNING - discrepancy in player location:")
+            #    print("     agent.x = {}".format(self.agent_x))
+            #    print("     agent.y = {}".format(self.agent_y))
+            #    print("     playercell.x = {}".format(player_cell.x))
+            #    print("     playercell.y = {}".format(player_cell.y))
 
 
     def draw_cell_map(self):
