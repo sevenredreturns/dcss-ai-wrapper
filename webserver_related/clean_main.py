@@ -3,13 +3,14 @@ import zlib
 import websockets
 import json
 
-async def query_server(websocket):
+
+async def query_server(websocket) :
     '''
     I want to get all data from the server until the server is empty (i.e. nothing else left to get)
     and then I want to hand control over to the agent to send an action
     '''
 
-    while True:
+    while True :
         print("querying server")
         data_recv = await websocket.recv()
         data_recv += bytes([0, 0, 255, 255])
@@ -26,24 +27,26 @@ async def query_server(websocket):
     # then when it returns, execution will be here
 
 
-async def send_agent_actions():
+async def send_agent_actions() :
     delay = 1
-    while True:
-
+    while True :
         pass
 
-async def startup(server_uri):
+
+async def startup(server_uri) :
     ws = await websockets.connect(server_uri)
     return ws
 
-if __name__ == "__main__":
 
-    server_uri = 'ws://localhost:8080/socket'
+if __name__ == "__main__" :
+    server_uri = 'ws://192.168.0.187:8080/socket'
 
     ### CHANGE USERNAME AND PASSWORD HERE ###
-    login_msg = {'msg': 'login',
-                 'username': 'midca',
-                 'password': 'midca'}
+    login_msg = {
+            'msg'      : 'login',
+            'username' : 'midca',
+            'password' : 'midca'
+            }
 
     decomp = zlib.decompressobj(-zlib.MAX_WBITS)
 

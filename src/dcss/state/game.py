@@ -153,8 +153,8 @@ class GameState:
         self.noise_level = None
         self.adjusted_noise_level = None
 
-        self.general_knowledge_pddl_facts_filename = "models/general_dcss_knowledge_facts.pddl"
-        self.general_knowledge_pddl_objects_filename = "models/general_dcss_knowledge_objects.pddl"
+        self.general_knowledge_pddl_facts_filename = "D:\\Users\\Melody\\Google Drive\\morris85@students.rowan.edu\\Spring 2022\\AI\\FinalProject\\models\\general_dcss_knowledge_facts.pddl"
+        self.general_knowledge_pddl_objects_filename = "D:\\Users\\Melody\\Google Drive\\morris85@students.rowan.edu\\Spring 2022\\AI\\FinalProject\\models\\general_dcss_knowledge_objects.pddl"
 
         self.id = GameState.ID
         GameState.ID += 1
