@@ -204,3 +204,14 @@ class Action :
     @staticmethod
     def get_level_stat():
         return [Command.SAVE_GAME_AND_EXIT]
+
+    @staticmethod
+    def get_long_travel():
+        return [Command.LONG_WALK_E,
+                Command.LONG_WALK_N,
+                Command.LONG_WALK_S,
+                Command.LONG_WALK_W,
+                Command.LONG_WALK_NE,
+                Command.LONG_WALK_NW,
+                Command.LONG_WALK_SE,
+                Command.LONG_WALK_SW]

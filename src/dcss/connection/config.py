@@ -12,8 +12,8 @@ class WebserverConfig:
     """
         This configuration should be used when running DCSS in webserver mode.
     """
-    server_uri = 'ws://192.168.0.187:8080/socket'
-    server_ip = '192.168.0.187'
+    server_uri = 'ws://73.178.139.245:8080/socket'
+    server_ip = '73.178.139.245'
     server_port = '8080'
     agent_name = 'midca'
     agent_password = 'midca'

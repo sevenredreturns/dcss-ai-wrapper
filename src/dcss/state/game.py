@@ -27,6 +27,8 @@ class GameState :
 
     def __init__(self) :
         # state is just a dictionary of key value pairs
+        self.level_strength = None
+        self.injured = None
         self.stairs_down = None
         self.no_autoexplore = None
         self.cannot_fight = None
@@ -1745,8 +1747,11 @@ class GameState :
                 self.cannot_fight = True
 
             if 'You are too injured to fight recklessly!' in message_only :
+                self.injured = True
                 self.cannot_fight = True
-                self.no_autoexplore = True
+
+            if "Increase (S)trength, (I)ntelligence, or (D)exterity?" in message_only :
+                self.level_strength = True
 
             if 'Done exploring.' in message_only :
                 self.no_autoexplore = True
@@ -2064,6 +2069,12 @@ class GameState :
             self.exploration_done = False
         return exploration_finished
 
+    def too_injured(self, reset=True) :
+        reckless_fight_off = self.injured
+        if reset :
+            self.injured = False
+        return reckless_fight_off
+
     def is_enemy_around(self, reset=True) :
         no_enemy = self.cannot_fight
         if reset :
@@ -2081,6 +2092,12 @@ class GameState :
         if reset :
             self.stairs_down = False
         return going_down
+
+    def leveling_up(self, reset=True) :
+        leveling_strength = self.level_strength
+        if reset :
+            self.level_strength = False
+        return leveling_strength
 
     def agent_cannot_move(self, reset=True) :
         cannot_move = self.cannot_move
