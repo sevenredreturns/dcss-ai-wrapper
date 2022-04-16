@@ -1,4 +1,4 @@
-autobahn
+autobahn~=22.2.2
 cffi==1.14.5
 cryptography==3.4.6
 hyperlink==21.0.0
@@ -7,11 +7,14 @@ nested-lookup==0.2.22
 pycparser==2.20
 six==1.15.0
 txaio==21.2.1
-websockets
+websockets~=10.2
 numpy
-matplotlib
+matplotlib~=3.5.1
 readchar
 sphinx-rtd-theme
 sphinx-autoapi
 
 
+
+gym~=0.23.1
+setuptools~=60.2.0

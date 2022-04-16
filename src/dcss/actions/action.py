@@ -183,11 +183,24 @@ class Action :
                 Command.MOVE_OR_ATTACK_SE,
                 Command.MOVE_OR_ATTACK_NE]
 
+#Additions for AI Final Project - Theresa Morris
+
     @staticmethod
     def get_auto_explore() :
-        return [Command.AUTO_EXPLORE,
-                Command.AUTO_FIGHT]
+        return [Command.AUTO_EXPLORE]
+
+    @staticmethod
+    def get_auto_fight() :
+        return [Command.AUTO_FIGHT]
 
     @staticmethod
     def get_stairs_down() :
         return [Command.TRAVEL_STAIRCASE_DOWN]
+
+    @staticmethod
+    def get_level_enter():
+        return [Command.ENTER_KEY]
+
+    @staticmethod
+    def get_level_stat():
+        return [Command.SAVE_GAME_AND_EXIT]
