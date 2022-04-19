@@ -21,10 +21,10 @@ class FastDownwardPlanningAgentTut1(BaseAgent):
         super().__init__()
         self.current_game_state = None
         self.next_command_id = 1
-        self.planner_filename = "./downward/fast-downward.py"
-        self.plan_domain_filename = "models/fastdownward_simple.pddl"
-        self.plan_current_pddl_state_filename = "models/fdtempfiles/state.pddl"
-        self.plan_result_filename = "models/fdtempfiles/dcss_plan.sas"
+        self.planner_filename = "../../../FastDownward/fast-downward.py"
+        self.plan_domain_filename = "../../../models/fastdownward_simple.pddl"
+        self.plan_current_pddl_state_filename = "../../../models/fdtempfiles/state.pddl"
+        self.plan_result_filename = "../../../models/fdtempfiles/dcss_plan.sas"
         self.plan = []
         self.actions_taken_so_far = 0
         self.current_goal = None

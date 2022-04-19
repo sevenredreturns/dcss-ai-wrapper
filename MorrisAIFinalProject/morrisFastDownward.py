@@ -25,9 +25,9 @@ class FastDownwardPlanningBaseAgent(BaseAgent):
         super().__init__()
         self.current_game_state = None
         self.next_command_id = 1
-        self.plan_domain_filename = "../../../models/fastdownward_simple.pddl"
-        self.plan_current_pddl_state_filename = "../../../models/fdtempfiles/state.pddl"
-        self.plan_result_filename = "../../../models/fdtempfiles/dcss_plan.sas"
+        self.plan_domain_filename = "../models/fastdownward_simple.pddl"
+        self.plan_current_pddl_state_filename = "../models/fdtempfiles/state.pddl"
+        self.plan_result_filename = "../models/fdtempfiles/dcss_plan.sas"
         self.plan = []
         self.actions_taken_so_far = 0
         self.current_goal = None
@@ -38,34 +38,45 @@ class FastDownwardPlanningBaseAgent(BaseAgent):
         self.current_goal_type = None
         self.num_cells_visited = 0
         self.player_has_seen_stairs_down = {x:False for x in range(0,50)}  # key is depth, value is whether seen stairs down
-
+        self.level_up = False
         self.cells_not_visited = []
         self.cells_visited = []
         self.closed_door_cells = []
+        self.need_to_heal = None
 
         self.found_item = None # if not None, this will be a cell
         self.inventory_full = False
 
     def process_gamestate_via_cells(self):
+        #REMOVE CLOSED DOORS BY WIPING ARRAY
+        self.closed_door_cells = []
+
+
         for cell in self.current_game_state.get_cell_map().get_xy_to_cells_dict().values():
             if cell.has_player_visited:
                 self.cells_visited.append(cell)
-            elif not cell.has_wall and not cell.has_player and not cell.has_statue and not cell.has_lava and not cell.has_plant and not cell.has_tree and cell.g:
+            elif not cell.has_wall and not cell.has_player and not cell.has_statue and not cell.has_lava and not \
+                    cell.has_plant and not cell.has_tree and not cell.teleport_trap and cell.g:
                 # print("added {} as an available cell, it's g val is {}".format(cell.get_pddl_name(), cell.g))
                 self.cells_not_visited.append(cell)
             else:
                 pass
 
             if cell.has_closed_door:
-                self.closed_door_cells.append(cell)
+               self.closed_door_cells.append(cell)
 
             if cell.has_stairs_down:
+                self.player_has_seen_stairs_down[self.current_game_state.player_depth] = True
+                print("Setting stairs down to be True for depth {}".format(self.current_game_state.player_depth))
+
+            if cell.has_shaft:
                 self.player_has_seen_stairs_down[self.current_game_state.player_depth] = True
                 print("Setting stairs down to be True for depth {}".format(self.current_game_state.player_depth))
 
         self.num_cells_visited = len(self.cells_visited)
 
     def get_full_health_goal(self):
+        self.need_to_heal = True
         return "(playerfullhealth)"
 
     def get_nearest_item_pickup_goal(self):
@@ -116,7 +127,7 @@ class FastDownwardPlanningBaseAgent(BaseAgent):
         """
         cells_with_monsters = []
         for cell in self.current_game_state.get_cell_map().get_xy_to_cells_dict().values():
-            if cell.monster:
+            if cell.monster and not cell.has_plant and not cell.has_tree:
                 cells_with_monsters.append(cell)
 
         if len(cells_with_monsters) == 0:
@@ -151,7 +162,7 @@ class FastDownwardPlanningBaseAgent(BaseAgent):
                 self.plan_domain_filename,
                 self.plan_current_pddl_state_filename), ]
         # This is used for windows
-        fast_downward_system_call = "python ../../../FastDownward/fast-downward.py --plan-file {} {} {} --search " \
+        fast_downward_system_call = "python ../FastDownward/fast-downward.py --plan-file {} {} {} --search " \
                                     "\"astar(lmcut())\" {}".format(
             self.plan_result_filename,
             self.plan_domain_filename,
@@ -191,18 +202,6 @@ class FastDownwardPlanningBaseAgent(BaseAgent):
         #    print("Plan step: {}".format(ps))
 
         return plan
-
-    def equip_best_items(self):
-        """
-        Calling this will have the agent evaluate the best items
-        """
-        pass
-
-    def read_scrolls(self):
-        """
-        The agent will read all scrolls in its inventory
-        """
-        pass
 
     def can_create_plan_to_reach_next_floor(self):
         """
@@ -248,8 +247,8 @@ class FastDownwardPlanningBaseAgent(BaseAgent):
         monster_goal = self.get_first_monster_goal()
         if monster_goal:
             return monster_goal, "monster"
-#        elif self.current_game_state.player_current_hp and self.current_game_state.player_hp_max and self.current_game_state.player_current_hp < self.current_game_state.player_hp_max / 2:
-#            return self.get_full_health_goal(), "heal"
+        elif self.current_game_state.player_current_hp and self.current_game_state.player_hp_max and self.current_game_state.player_current_hp < self.current_game_state.player_hp_max / 2:
+            return self.get_full_health_goal(), "heal"
         if self.player_has_seen_stairs_down[self.current_game_state.player_depth]:
             lower_place_str = "{}_{}".format(self.current_game_state.player_place.lower().strip(),
                                              self.current_game_state.player_depth+1)
@@ -275,6 +274,11 @@ class FastDownwardPlanningBaseAgent(BaseAgent):
     def get_action(self, gamestate: GameState):
         self.current_game_state = gamestate
         self.process_gamestate_via_cells()
+        self.level_up = self.current_game_state.leveling_up()
+
+        print(self.current_game_state.leveling_up())
+        print(self.level_up)
+        print(self.need_to_heal)
 
         self.new_goal, self.new_goal_type = self.goal_selection()
         print("Player at: {},{}".format(self.current_game_state.agent_x, self.current_game_state.agent_y))
@@ -292,7 +296,19 @@ class FastDownwardPlanningBaseAgent(BaseAgent):
             self.previous_goal_type = self.new_goal_type
 
         next_action = None
-        if self.plan and len(self.plan) > 0:
+        if self.level_up == True:
+            #I want to default to leveling strength, if I get far enough to level.  Therefore, I use the Save Game
+            # and Exit command, as that is a capital S, the input required for Strength.
+            next_action = Command.SAVE_GAME_AND_EXIT
+            return next_action
+        elif self.need_to_heal == True and self.current_goal_type != 'monster' and self.new_goal_type != 'monster' \
+                and self.get_first_monster_goal() == "":
+            #If low health, wait to regen - But only if t here are no monsters nearby (hopefully) or this ends in an
+            # endless loop.
+            next_action = Command.REST_AND_LONG_WAIT
+            self.need_to_heal = False
+            return next_action
+        elif self.plan and len(self.plan) > 0:
             next_action = self.plan.pop(0)
             self.actions_taken_so_far += 1
             return next_action
