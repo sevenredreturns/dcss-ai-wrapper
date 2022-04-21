@@ -12,8 +12,8 @@ class WebserverConfig:
     """
         This configuration should be used when running DCSS in webserver mode.
     """
-    server_uri = 'ws://192.168.0.187:8080/socket'
-    server_ip = '192.168.0.187'
+    server_uri = 'ws://73.178.139.245:8080/socket'
+    server_ip = '73.178.139.245'
     server_port = '8080'
     agent_name = 'midca'
     agent_password = 'midca'
@@ -25,7 +25,7 @@ class WebserverConfig:
     #   'seeded-web-trunk'    - play a seeded version of the game
     #   'tut-web-trunk'       - play a tutorial
     #   'sprint-web-trunk'    - play a sprint
-    game_id = 'dcss-web-trunk'
+    game_id = 'seeded-web-trunk'
 
     seed = 4675233756386659716
 

@@ -100,8 +100,17 @@ class MyAgent(BaseAgent) :
 if __name__ == "__main__" :
     my_config = WebserverConfig
 
-    # set game mode to Tutorial #1
+    # Toggle what is commented in the game_id section to choose between a seeded and unseeded game
     my_config.game_id = 'dcss-web-trunk'
+    # my_config.game_id = 'seeded-web-trunk'
+
+    my_config.delay = 0.4
+    my_config.species = 'Troll'
+    my_config.background = 'Fighter'
+    my_config.starting_weapon = 'war axe'
+
+    my_config.auto_start_new_game = True
+    my_config.always_start_new_game = False
 
     # create game
     game = WebSockGame(config=my_config, agent_class=MyAgent)
